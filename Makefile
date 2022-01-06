@@ -16,6 +16,7 @@ $(PROG): $(OBJS)
 
 clean:
 	find . -maxdepth 1 \
+	-type f \
 	-not -name '*.*' \
 	-not -name 'Makefile' -exec rm -i "{}" \;
 	rm -i *.o

@@ -15,16 +15,17 @@ int getParentIndex(int childIndex);
 int hasLeftChild(int parentIndex, int size);
 int hasRightChild(int parentIndex, int size);
 int hasParent(int childIndex);
-char *leftChild(int parentIndex, heap *h);
-char *rightChild(int parentIndex, heap *h);
-char *parent(int childIndex, heap *h);
+void *leftChild(int parentIndex, heap *h);
+void *rightChild(int parentIndex, heap *h);
+void *parent(int childIndex, heap *h);
 void swap(heap *h, int indexOne, int indexTwo);
 void heapifyUp(heap *h);
 void heapifyDown(heap *h);
 
-heap *init_heap(void) {
+heap *init_heap(int (*cmp_f)(void *, void *)) {
     heap *h = malloc(sizeof(heap));
-    h->s_arr_p = malloc(INITSZ * sizeof(char *));
+    h->cmp_f = cmp_f;
+    h->s_arr_p = malloc(INITSZ * sizeof(void *));
     h->arr_size = INITSZ;
     h->n_items = 0;
     return h;
@@ -34,13 +35,13 @@ int is_empty(heap *h) {
     return !h->n_items;
 }
 
-int push_heap(heap *h, char *s) {
+int push_heap(heap *h, void *s, size_t n) {
     // Increase array size if full
     guarantee_space(h);
 
     // Copy string to heap
-    char *new_s = malloc(strlen(s) + 1);
-    strcpy(new_s, s);
+    void *new_s = malloc(n);
+    memcpy(new_s, s, n);
     // Append string pointer to array
     int index = h->n_items;
     (h->s_arr_p)[index] = new_s;
@@ -53,9 +54,9 @@ int push_heap(heap *h, char *s) {
     return 0;
 }
 
-char *pop_heap(heap *h) {
-    char *s = peek(h);
-    char **s_arr = h->s_arr_p;
+void *pop_heap(heap *h) {
+    void *s = peek(h);
+    void **s_arr = h->s_arr_p;
     int n_items = h->n_items;
     s_arr[0] = s_arr[n_items - 1];
     h->n_items--;
@@ -63,13 +64,13 @@ char *pop_heap(heap *h) {
     return s;
 }
 
-char *peek(heap *h) {
+void *peek(heap *h) {
     assert(!is_empty(h));
     return h->s_arr_p[0];
 }
 
 void free_heap(heap *h) {
-    char **s_arr = h->s_arr_p;
+    void **s_arr = h->s_arr_p;
     int n = h->n_items;
     for (int i = 0; i < n; i++)
         free(s_arr[i]);
@@ -112,30 +113,31 @@ int hasParent(int childIndex) {
     return getParentIndex(childIndex) >= 0;
 }
 
-char *leftChild(int parentIndex, heap *h) {
+void *leftChild(int parentIndex, heap *h) {
     return h->s_arr_p[getLeftChildIndex(parentIndex)];
 }
 
-char *rightChild(int parentIndex, heap *h) {
+void *rightChild(int parentIndex, heap *h) {
     return h->s_arr_p[getRightChildIndex(parentIndex)];
 }
 
-char *parent(int childIndex, heap *h) {
+void *parent(int childIndex, heap *h) {
     return h->s_arr_p[getParentIndex(childIndex)];
 }
 
 void swap(heap *h, int indexOne, int indexTwo) {
-    char **arr = h->s_arr_p;
-    char *temp = arr[indexOne];
+    void **arr = h->s_arr_p;
+    void *temp = arr[indexOne];
     arr[indexOne] = arr[indexTwo];
     arr[indexTwo] = temp;
 }
 
 void heapifyUp(heap *h) {
-    char **s_arr = h->s_arr_p;
+    void **s_arr = h->s_arr_p;
+    int (*cmp_f)(void *, void *) = h->cmp_f;
     int index = h->n_items - 1;
     while (hasParent(index) && 
-        strcasecmp(s_arr[getParentIndex(index)], s_arr[index]) > 0)
+        cmp_f(s_arr[getParentIndex(index)], s_arr[index]) > 0)
     {
         swap(h, getParentIndex(index), index);
         index = getParentIndex(index);
@@ -143,18 +145,19 @@ void heapifyUp(heap *h) {
 }
 
 void heapifyDown(heap *h) {
-    char **s_arr = h->s_arr_p;
+    void **s_arr = h->s_arr_p;
+    int (*cmp_f)(void *, void *) = h->cmp_f;
     int index = 0;
     int size = h->n_items;
     while (hasLeftChild(index, size))
     {
         int smallerChildIndex = getLeftChildIndex(index);
         if (hasRightChild(index, size) && 
-        strcasecmp(rightChild(index, h), leftChild(index, h)) < 0)
+           cmp_f(rightChild(index, h), leftChild(index, h)) < 0)
         {
             smallerChildIndex = getRightChildIndex(index);
         }
-        if (strcasecmp(s_arr[index], s_arr[smallerChildIndex]) < 0)
+        if (cmp_f(s_arr[index], s_arr[smallerChildIndex]) < 0)
         {
             return;
         }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "heap.h"
 
 #define SIZE 1024
@@ -8,15 +9,24 @@
 void test_heap(void);
 FILE *myfopen(const char *filename, const char *modes);
 int getword(FILE *stream, char *buf, int bufsize);
+int mystrcmp(void *a, void *b);
+
+int mystrcmp(void *a, void *b)
+{
+    // int lendiff = strlen(a) - strlen(b);
+    // if (lendiff != 0)
+    //     return lendiff;
+    // else
+        return strcasecmp(a, b);
+}
 
 void test_heap(void)
 {
-    char *buf[] = {"this", "is", "not", "but", "should", 
-    "be", "sorted", "alphabetically", "those"};
+    char *buf[] = {"aa", "ab", "bc", "zz", "ak", "lm"};
 
-    heap *h = init_heap();
+    heap *h = init_heap(mystrcmp);
     for (size_t i = 0; i < sizeof(buf) / sizeof(*buf); i++)
-        push_heap(h, buf[i]);
+        push_heap(h, buf[i], strlen(buf[i]) + 1);
 
     char *sOut;
     for (int i = 0; !is_empty(h); i++)
@@ -66,7 +76,7 @@ int getword(FILE *stream, char *buf, int bufsize)
             else
                 buf[i++] = '-';
         }
-    } while ((isalnum(c)) && i < bufsize - 2);
+    } while ((isalnum(c) || c == '\'') && i < bufsize - 2);
 
     buf[i] = '\0';
     return 0;
@@ -74,18 +84,17 @@ int getword(FILE *stream, char *buf, int bufsize)
 
 int main(int argc, char *argv[])
 {
-    char *filename;
+    FILE *fp;
     if (argc == 2)
-        filename = argv[1];
+        fp = myfopen(argv[1], "r");
     else
-        filename = "test.txt";
+        fp = stdin;
 
-    FILE *fp = myfopen(filename, "r");
     char s[SIZE];
-    heap *h = init_heap();
+    heap *h = init_heap(mystrcmp);
     while (getword(fp, s, SIZE) != EOF)
     {
-        push_heap(h, s);
+        push_heap(h, s, strlen(s) + 1);
     }
 
     char *sOut;
@@ -95,7 +104,6 @@ int main(int argc, char *argv[])
         printf("%s\n", sOut);
         free(sOut);
     }
-
     free_heap(h);
     fclose(fp);
     // test_heap();
