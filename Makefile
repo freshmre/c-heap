@@ -3,7 +3,8 @@ CFLAGS=-m64 -std=c99 -pedantic -Wall -Wshadow -Wpointer-arith -Wcast-qual \
         -Wstrict-prototypes -Wmissing-prototypes -Wextra -g
 PROG=main
 OBJS=main.o \
-     heap.o
+     heap.o \
+	 tokenizer.o
 HEADERS=heap.h
 
 all: $(PROG)
