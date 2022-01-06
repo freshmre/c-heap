@@ -68,6 +68,15 @@ char *peek(heap *h) {
     return h->s_arr_p[0];
 }
 
+void free_heap(heap *h) {
+    char **s_arr = h->s_arr_p;
+    int n = h->n_items;
+    for (int i = 0; i < n; i++)
+        free(s_arr[i]);
+    free(s_arr);
+    free(h);
+}
+
 int guarantee_space(heap *h) {
     if (h->n_items == h->arr_size)
     {

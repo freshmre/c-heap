@@ -16,12 +16,16 @@ void test_heap(void)
 
     heap *h = init_heap();
     for (size_t i = 0; i < sizeof(buf) / sizeof(*buf); i++)
-    {
         push_heap(h, buf[i]);
-    }
 
+    char *sOut;
     for (int i = 0; !is_empty(h); i++)
-        printf("%02d: %s\n", i, pop_heap(h));
+    {
+        sOut = pop_heap(h);
+        printf("%s\n", sOut);
+        free(sOut);
+    }
+    free_heap(h);
 }
 
 FILE *myfopen(const char *filename, const char *modes)
@@ -80,10 +84,19 @@ int main(int argc, char *argv[])
     char s[SIZE];
     heap *h = init_heap();
     while (getword(fp, s, SIZE) != EOF)
+    {
         push_heap(h, s);
+    }
 
+    char *sOut;
     for (int i = 0; !is_empty(h); i++)
-        printf("%s\n", pop_heap(h));
+    {
+        sOut = pop_heap(h);
+        printf("%s\n", sOut);
+        free(sOut);
+    }
 
-    //test_heap();
+    free_heap(h);
+    fclose(fp);
+    // test_heap();
 }

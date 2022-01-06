@@ -13,3 +13,4 @@ int is_empty(heap *h);
 int push_heap(heap *h, char *s);
 char *pop_heap(heap *h);
 char *peek(heap *h);
+void free_heap(heap *h);
