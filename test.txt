@@ -1,9 +1,7 @@
-Implementing data structures is a good amount. Does not pay at all to go too deep into its 40 year old autistic libraries or anything.
-
-A good task could be reading words from a file into a binary tree in alphabetic order, also into a min or max heap.
-
-These would require a basic tokenizer for space separated words, basic file io to read from the file, basic memory management to add and possibly remove from the tree with pointers, and a good bit of abstraction with helper methods to organize the thing.
-
-If you can do that you can probably tackle any swe internship or entry level job.
-
+hello world normal text
+text with     multiple       spaces
+text    with    tabs    and             spaces
 hyphenated-word
+trun-
+cated
+The line, this line, contains... punctuation!

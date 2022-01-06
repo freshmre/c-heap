@@ -1,8 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "heap.h"
 
 #define SIZE 1024
+
+void test_heap(void);
+FILE *myfopen(const char *filename, const char *modes);
+int getword(FILE *stream, char *buf, int bufsize);
+
+void test_heap(void)
+{
+    char *buf[] = {"this", "is", "not", "but", "should", 
+    "be", "sorted", "alphabetically", "those"};
+
+    heap *h = init_heap();
+    for (size_t i = 0; i < sizeof(buf) / sizeof(*buf); i++)
+    {
+        push_heap(h, buf[i]);
+    }
+
+    for (int i = 0; !is_empty(h); i++)
+        printf("%02d: %s\n", i, pop_heap(h));
+}
 
 FILE *myfopen(const char *filename, const char *modes)
 {
@@ -33,7 +53,16 @@ int getword(FILE *stream, char *buf, int bufsize)
     {
         buf[i++] = c;
         c = getc(stream);
-    } while ((isalnum(c) || c == '-') && i < bufsize - 2);
+        if (c == '-')
+        {
+            // Skip truncation hyphen
+            if ((c = getc(stream)) == '\n')
+                c = getc(stream);
+            // Hyphen is part of the word
+            else
+                buf[i++] = '-';
+        }
+    } while ((isalnum(c)) && i < bufsize - 2);
 
     buf[i] = '\0';
     return 0;
@@ -49,6 +78,12 @@ int main(int argc, char *argv[])
 
     FILE *fp = myfopen(filename, "r");
     char s[SIZE];
+    heap *h = init_heap();
     while (getword(fp, s, SIZE) != EOF)
-        puts(s);
+        push_heap(h, s);
+
+    for (int i = 0; !is_empty(h); i++)
+        printf("%s\n", pop_heap(h));
+
+    //test_heap();
 }

@@ -1,10 +1,15 @@
 #pragma once
+#include <stddef.h>
+#define BUFSIZE 1024
 
-typedef struct node {
-    char *val;
-    struct node *left;
-    struct node *right;
-} node;
+typedef struct {
+    char **s_arr_p;
+    int arr_size;
+    int n_items;
+} heap;
 
-int init_maxheap(void);
-int insert_maxheap(node *root, char *s);
+heap *init_heap(void);
+int is_empty(heap *h);
+int push_heap(heap *h, char *s);
+char *pop_heap(heap *h);
+char *peek(heap *h);
