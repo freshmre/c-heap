@@ -42,7 +42,7 @@ Note that it is the responsibity of the user to free `top`, as it has been seper
 | Action                                                      | Code                                          | Notes                                                            |
 |-------------------------------------------------------------|-----------------------------------------------|------------------------------------------------------------------|
 | Initialize min- or max-heap                                 | `heap *h = init_heap(cmp_f, Min_Heap, 1024);` | use `Min_Heap` or `Max_Heap` as `type` for respective heap type  |
-| Check whether heap is empty                                 | `int empty = is_empty(h);                     | returns `1` if empty, `0` otherwise                              |
+| Check whether heap is empty                                 | `int empty = is_empty(h);`                    | returns `1` if empty, `0` otherwise                              |
 | Push float `f` into heap                                    | `push_heap(h, &f, sizeof(f));`                |                                                                  |
 | Get pointer to float on top of the heap without removing it | `float *top_fl = peek_heap(h);`               |                                                                  |
 | Get pointer to float on top of the heap and removing it     | `float *popped_fl = pop_heap(h);`             | `free`ing `popped_fl` is up to you                               |
