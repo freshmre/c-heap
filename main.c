@@ -3,6 +3,8 @@
 #include <string.h>
 #include <strings.h>
 #include <time.h>
+#include <assert.h>
+#include <math.h>
 #include "heap.h"
 #include "tokenizer.h"
 
@@ -17,8 +19,10 @@ int mycmp(void *a, void *b)
 }
 
 int genRandInt(int a, int b) {
-    int r = rand();
-    return r;
+    assert(a <= b);
+    long v = rand();
+    long range = b - a;
+    return roundf(range * v / (float) RAND_MAX) + a;
 }
 
 int main(void)
@@ -28,11 +32,10 @@ int main(void)
     heap *h = init_heap(mycmp);
     int i;
     int n;
-    for (i = 0; i < 10000; i++)
+    for (i = 0; i < 100000; i++)
     {
-        n = i;
+        n = genRandInt(-100, 100);
         push_heap(h, &n, sizeof(n));
-        printf("%d\n", h->n_items);
     }
 
     int *v;

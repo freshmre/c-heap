@@ -5,15 +5,16 @@ PROG=main
 OBJS=main.o \
      heap.o \
 	 tokenizer.o
-HEADERS=heap.h
+LIBS=-lm
+HEADERS=heap.h tokenizer.h
 
 all: $(PROG)
 
 $(PROG): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
 
 %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< $(LIBS) 
 
 clean:
 	find . -maxdepth 1 \

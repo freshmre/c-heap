@@ -104,7 +104,6 @@ int guarantee_space(heap *h)
         }
         h->arr_size = newSize;
     }
-    printf("size of array: %d\n", h->arr_size);
     // Success
     return 0;
 }
