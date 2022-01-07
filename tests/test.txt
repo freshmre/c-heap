@@ -1,7 +1,0 @@
-hello world normal text
-text with     multiple       spaces
-text    with    tabs    and             spaces
-hyphenated-word
-trun-
-cated
-The line, this line, contains... punctuation!

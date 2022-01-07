@@ -2,39 +2,46 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <time.h>
 #include "heap.h"
 #include "tokenizer.h"
 
 #define SIZE 1024
 
-int mystrcmp(void *a, void *b);
+int mycmp(void *a, void *b);
+int genRandInt(int a, int b);
 
-int mystrcmp(void *a, void *b)
+int mycmp(void *a, void *b)
 {
-    return strcasecmp(a, b);
+    return *(int *) a - *(int *) b;
 }
 
-int main(int argc, char *argv[])
+int genRandInt(int a, int b) {
+    int r = rand();
+    return r;
+}
+
+int main(void)
 {
-    FILE *fp;
-    if (argc == 2)
-        fp = myfopen(argv[1], "r");
-    else
-        fp = stdin;
+    srand(time(NULL));
 
-    char s[SIZE];
-    heap *h = init_heap(mystrcmp);
-    while (getword(fp, s, SIZE) != EOF)
-        push_heap(h, s, strlen(s) + 1);
-
-    char *sOut;
-    for (int i = 0; !is_empty(h); i++)
+    heap *h = init_heap(mycmp);
+    int i;
+    int n;
+    for (i = 0; i < 10000; i++)
     {
-        sOut = pop_heap(h);
-        printf("%s\n", sOut);
-        free(sOut);
+        n = i;
+        push_heap(h, &n, sizeof(n));
+        printf("%d\n", h->n_items);
+    }
+
+    int *v;
+    for (i = 0; !is_empty(h); i++)
+    {
+        v = pop_heap(h);
+        printf("%d\n", *v);
+        free(v);
     }
 
     free_heap(h);
-    fclose(fp);
 }
