@@ -82,7 +82,7 @@ int guarantee_space(heap *h) {
     if (h->n_items == h->arr_size)
     {
         int newSize = h->arr_size * RESIZEMUL;
-        h->s_arr_p = realloc(h->s_arr_p, newSize);
+        h->s_arr_p = realloc(h->s_arr_p, newSize * sizeof(void *));
         h->arr_size *= RESIZEMUL;
     }
     // Success
