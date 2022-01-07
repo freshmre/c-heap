@@ -1,3 +1,4 @@
+/* Implements array heap */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +23,7 @@ void heapifyUp(heap *h);
 void heapifyDown(heap *h);
 int mycmp_f(int (*cmp_f)(void *, void *), void *a, void *b, enum heap_type type);
 
+/* Initialize heap struct and array */
 heap *init_heap(int (*cmp_f)(void *, void *), enum heap_type type, int initsize)
 {
     heap *h = malloc(sizeof(heap));
@@ -33,11 +35,13 @@ heap *init_heap(int (*cmp_f)(void *, void *), enum heap_type type, int initsize)
     return h;
 }
 
+/* Check if heap is empty */
 int is_empty(heap *h)
 {
     return !h->n_items;
 }
 
+/* Push element into heap */
 int push_heap(heap *h, void *s, size_t n)
 {
     // Increase array size if full
@@ -63,23 +67,34 @@ int push_heap(heap *h, void *s, size_t n)
     return 0;
 }
 
+/* Pop top element from heap */
 void *pop_heap(heap *h)
 {
+    // Get top element
     void *s = peek(h);
+
     void **s_arr = h->s_arr_p;
     int n_items = h->n_items;
+
+    // Place last element on top of tree
     s_arr[0] = s_arr[n_items - 1];
+
+    // Account for popped element
     h->n_items--;
+
+    // Bubble down
     heapifyDown(h);
     return s;
 }
 
+/* Get pointer to top element in heap */
 void *peek(heap *h)
 {
     assert(!is_empty(h));
     return h->s_arr_p[0];
 }
 
+/* Free all elements in heap array, the array and heap struct */
 void free_heap(heap *h)
 {
     void **s_arr = h->s_arr_p;
@@ -90,6 +105,7 @@ void free_heap(heap *h)
     free(h);
 }
 
+/* Grow array by RESIZEMUL if full else do nothing */
 int guarantee_space(heap *h)
 {
     if (h->n_items == h->arr_size)
@@ -109,6 +125,7 @@ int guarantee_space(heap *h)
     return 0;
 }
 
+/* Heap array helper methods */
 int getLeftChildIndex(int parentIndex)
 {
     return 2 * parentIndex + 1;
@@ -212,6 +229,7 @@ void heapifyDown(heap *h)
     }
 }
 
+/* Negate cmp_f value if using max-heap for reverse ordering */
 int mycmp_f(int (*cmp_f)(void *, void *), void *a, void *b,
             enum heap_type type)
 {

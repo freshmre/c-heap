@@ -1,16 +1,21 @@
+/* API for array heap, accepts any type, supports min- and max-heap 
+ * Memory is allocated dynamically, user bears the resposibility of freeing
+ * popped elements
+ */
+
 #pragma once
 #include <stddef.h>
 #define BUFSIZE 1024
 
-typedef struct {
-    int heap_type;
-    int (*cmp_f)(void *, void *);
-    void **s_arr_p;
-    int arr_size;
-    int n_items;
-} heap;
-
 enum heap_type {Min_Heap, Max_Heap};
+
+typedef struct {
+    int heap_type; // Min-Heap or Max-heap
+    int (*cmp_f)(void *, void *); // User defined function
+    void **s_arr_p; // Array of pointers to elements
+    int arr_size; // Array size
+    int n_items; // Number of elements in the heap
+} heap;
 
 heap *init_heap(int (*cmp_f)(void *, void *), 
     enum heap_type type, 
