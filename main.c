@@ -19,6 +19,7 @@ int mycmp(void *a, void *b)
 }
 
 int genRandInt(int a, int b) {
+    /* Generate an int in [a, b] */
     assert(a <= b);
     long v = rand();
     long range = b - a;
@@ -29,12 +30,12 @@ int main(void)
 {
     srand(time(NULL));
 
-    heap *h = init_heap(mycmp);
+    heap *h = init_heap(mycmp, Max_Heap, SIZE);
     int i;
     int n;
     for (i = 0; i < 100000; i++)
     {
-        n = genRandInt(-100, 100);
+        n = genRandInt(-10000, 10000);
         push_heap(h, &n, sizeof(n));
     }
 

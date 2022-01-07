@@ -5,7 +5,6 @@
 #include <assert.h>
 #include "heap.h"
 
-#define INITSZ 1024
 #define RESIZEMUL 2
 
 int guarantee_space(heap *h);
@@ -21,13 +20,15 @@ void *parent(int childIndex, heap *h);
 void swap(heap *h, int indexOne, int indexTwo);
 void heapifyUp(heap *h);
 void heapifyDown(heap *h);
+int mycmp_f(int (*cmp_f)(void *, void *), void *a, void *b, enum heap_type type);
 
-heap *init_heap(int (*cmp_f)(void *, void *))
+heap *init_heap(int (*cmp_f)(void *, void *), enum heap_type type, int initsize)
 {
     heap *h = malloc(sizeof(heap));
+    h->heap_type = type;
     h->cmp_f = cmp_f;
-    h->s_arr_p = malloc(INITSZ * sizeof(void *));
-    h->arr_size = INITSZ;
+    h->s_arr_p = malloc(initsize * sizeof(void *));
+    h->arr_size = initsize;
     h->n_items = 0;
     return h;
 }
@@ -166,8 +167,9 @@ void heapifyUp(heap *h)
     void **s_arr = h->s_arr_p;
     int (*cmp_f)(void *, void *) = h->cmp_f;
     int index = h->n_items - 1;
+
     while (hasParent(index) &&
-           cmp_f(s_arr[getParentIndex(index)], s_arr[index]) > 0)
+           mycmp_f(cmp_f, parent(index, h), s_arr[index], h->heap_type) > 0)
     {
         swap(h, getParentIndex(index), index);
         index = getParentIndex(index);
@@ -183,12 +185,22 @@ void heapifyDown(heap *h)
     while (hasLeftChild(index, size))
     {
         int smallerChildIndex = getLeftChildIndex(index);
-        if (hasRightChild(index, size) &&
-            cmp_f(rightChild(index, h), leftChild(index, h)) < 0)
+        if (hasRightChild(index, size))
         {
-            smallerChildIndex = getRightChildIndex(index);
+            if (mycmp_f(
+                    cmp_f,
+                    rightChild(index, h),
+                    leftChild(index, h),
+                    h->heap_type) < 0)
+            {
+                smallerChildIndex = getRightChildIndex(index);
+            }
         }
-        if (cmp_f(s_arr[index], s_arr[smallerChildIndex]) < 0)
+        if (mycmp_f(
+                cmp_f,
+                s_arr[index],
+                s_arr[smallerChildIndex],
+                h->heap_type) < 0)
         {
             return;
         }
@@ -198,4 +210,13 @@ void heapifyDown(heap *h)
         }
         index = smallerChildIndex;
     }
+}
+
+int mycmp_f(int (*cmp_f)(void *, void *), void *a, void *b,
+            enum heap_type type)
+{
+    if (type == Min_Heap)
+        return cmp_f(a, b);
+    else
+        return cmp_f(a, b) * -1;
 }
